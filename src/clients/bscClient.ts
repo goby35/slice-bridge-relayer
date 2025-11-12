@@ -1,6 +1,6 @@
 import { createPublicClient, createWalletClient, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { envConfig } from "@/env";
+import { envConfig } from "@/core/env";
 import { bscTestnet } from "../chains/bsc";
 
 export const bscPublic = createPublicClient({

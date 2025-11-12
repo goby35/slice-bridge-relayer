@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { encodeFunctionData } from "viem";
-import { envConfig } from "@/env";
+import { envConfig } from "@/core/env";
 import { MintRequest, UnlockRequest } from "@/schemas";
 import { db, bridgeJobs } from "@/db";
 import { lensPublic, lensWallet } from "@/clients/lensClient";
@@ -18,6 +18,9 @@ const getBridgeStatus = async (id: string) => {
         return rows[0];
     } catch (error) {
         console.error("Error getting bridge status:", error);
+        if (error instanceof NotFoundError) {
+            throw error;
+        }
         throw new InternalServerError();
     }
 };

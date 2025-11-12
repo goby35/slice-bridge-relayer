@@ -1,6 +1,6 @@
 import { createPublicClient, createWalletClient, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { envConfig } from "@/env";
+import { envConfig } from "@/core/env";
 import { lensTestnet } from "../chains/lens";
 
 export const lensPublic = createPublicClient({

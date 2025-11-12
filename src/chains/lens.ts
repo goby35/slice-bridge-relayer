@@ -1,5 +1,5 @@
 import { defineChain } from "viem";
-import { envConfig } from "@/env";
+import { envConfig } from "@/core/env";
 
 export const lensTestnet = defineChain({
   id: 37111,
