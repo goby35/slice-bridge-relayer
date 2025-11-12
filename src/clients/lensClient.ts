@@ -1,12 +1,12 @@
 import { createPublicClient, createWalletClient, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { envConfig } from "@/core/env";
+// import { createSmartPublicClient } from "@/clients/factory/smartClient";
 import { lensTestnet } from "@/chains/lens";
-import { wsOrHttp } from "@/lib/helpers/checkpoint";
+import { envConfig } from "@/core/env";
 
 export const lensPublicClient = createPublicClient({
   chain: lensTestnet,
-  transport: wsOrHttp(envConfig.LENS_RPC_WS, envConfig.LENS_RPC_HTTP)
+  transport: http(process.env.LENS_RPC_HTTP!),
 });
 
 export const lensWalletClient = createWalletClient({

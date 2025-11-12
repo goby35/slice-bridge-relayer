@@ -1,0 +1,1 @@
+ALTER TABLE "bridge_db"."bridge_jobs" ADD CONSTRAINT "uq_bridge_jobs_src_chain_id_src_tx_hash" UNIQUE("src_chain_id","src_tx_hash");

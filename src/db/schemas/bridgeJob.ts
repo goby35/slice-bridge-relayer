@@ -1,4 +1,4 @@
-import { uuid, text, bigint, varchar, numeric, timestamp } from "drizzle-orm/pg-core";
+import { uuid, text, bigint, varchar, numeric, timestamp, unique } from "drizzle-orm/pg-core";
 import { bridgeDB } from "../utils"
 
 export const bridgeJobs = bridgeDB.table("bridge_jobs", {
@@ -17,4 +17,12 @@ export const bridgeJobs = bridgeDB.table("bridge_jobs", {
   error: text("error"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow()
+},
+  (table) => {
+    return {
+      // Định nghĩa ràng buộc UNIQUE kết hợp
+      srcChainTxHashUnique: unique("uq_bridge_jobs_src_chain_id_src_tx_hash").on(table.srcChainId, table.srcTxHash),
+    };
 });
+
+export type BridgeJob = typeof bridgeJobs.$inferSelect;

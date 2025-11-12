@@ -11,7 +11,7 @@ import {
 } from "@/clients";
 import { BRIDGE_MINTER_LENS_ABI, BRIDGE_GATEWAY_BSC_ABI  } from "@/abis";
 import { InternalServerError, NotFoundError, BadRequestError } from "@/lib/custorm-exceptions";
-import { BridgeJobStatus } from "@/lib/constants/bridgeJobStatus";
+import { BridgeJobStatus } from "@/lib/constants";
 
 const getBridgeStatus = async (id: string) => {
     try {

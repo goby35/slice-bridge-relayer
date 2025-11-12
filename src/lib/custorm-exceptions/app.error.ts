@@ -1,6 +1,6 @@
 import { HTTPException } from 'hono/http-exception'
 import { ContentfulStatusCode } from 'hono/utils/http-status'
-import { ErrorCode } from '@/lib/constants/errorCode';
+import { ErrorCode } from '@/lib/constants';
 
 export class AppError extends HTTPException {
     public code: ErrorCode;

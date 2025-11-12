@@ -9,8 +9,8 @@ if (process.env.NODE_ENV === "production") {
 export const envConfig = {
   NODE_ENV: process.env.NODE_ENV || "development",
 
-  LENS_RPC_HTTP: process.env.LENS_RPC_HTTP || "https://rpc.lens.dev",
-  LENS_RPC_WS: process.env.LENS_RPC_WS || "wss://rpc-ws.lens.dev",
+  LENS_RPC_HTTP: process.env.LENS_RPC_HTTP ?? 'https://rpc.testnet.lens.xyz',
+  LENS_RPC_WS: process.env.LENS_RPC_WS || undefined,
   LENS_CHAIN_ID: Number(process.env.LENS_CHAIN_ID || 37111),
   LENS_START_BLOCK: Number(process.env.LENS_START_BLOCK || 0),
   LENS_CONFIRMATIONS: Number(process.env.LENS_CONFIRMATIONS || 1),
