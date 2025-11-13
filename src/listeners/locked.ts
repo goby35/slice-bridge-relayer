@@ -6,14 +6,13 @@ import { envConfig } from "@/core/env";
 import { bscPublicClient } from "@/clients";
 import { BridgeDirection } from "@/lib/types/bridge";
 import { CheckpointKey, EventName, BridgeJobStatus } from "@/lib/constants";
-import { getCheckpoint, setCheckpoint, confirmationsOk } from "@/lib/helpers/checkpoint";
+import { getCheckpoint, setCheckpoint } from "@/lib/helpers/checkpoint";
 import { backfillInWindows } from "@/lib/helpers/backfill";
 import { existedBridgeChecking } from "@/lib/helpers/existedBridgeChecking";
 import bridgeQueue from '@/queues'
 
 export async function lockedListener() {
   const key = CheckpointKey.BSC_LOCKED;
-  const confs = envConfig.BSC_CONFIRMATIONS;
   const pool = getAddress(envConfig.BSC_POOL_ADDRESS);
   const start = BigInt(await getCheckpoint(key, envConfig.BSC_START_BLOCK));
   const latest = await bscPublicClient.getBlockNumber();
@@ -29,7 +28,7 @@ export async function lockedListener() {
     event: lockedEventAbi,
     fromBlock: start,
     toBlock: latest > 0n ? latest - 1n : 0n,
-    window: 5_000,
+    window: 10_000,
     onLogs: async (logs) => {
       for (const l of logs) {
         await handleLockedLog(l);
@@ -38,15 +37,19 @@ export async function lockedListener() {
     },
   });
 
+  console.log("locked blocknumber latest:", latest);
+
   return bscPublicClient.watchContractEvent({
     address: pool,
     abi: BRIDGE_GATEWAY_BSC_ABI,
     eventName: EventName.LOCKED,
     fromBlock: latest, // từ block mới nhất
     onLogs: async (logs) => {
+      console.log("Received burned logs:", logs.length);
       const tip = await bscPublicClient.getBlockNumber();
+      console.log("Current tip block number:", tip);
+      console.log("logs:", logs);
       for (const l of logs) {
-        if (!confirmationsOk(tip, l.blockNumber!, confs)) continue;
         await handleLockedLog(l);
         await setCheckpoint(key, Number(l.blockNumber!));
       }

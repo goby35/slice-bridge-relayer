@@ -10,8 +10,12 @@ export function createQueue(): QueueAdapter {
     envConfig.REDIS_URL && envConfig.REDIS_URL !== 'redis://localhost:6379'
     || process.env.USE_REDIS === 'true'
   ) {
-    logger.info(`Using BullMQ with Redis: ${envConfig.REDIS_URL}`)
-    return new BullMqAdapter(envConfig.REDIS_URL, envConfig.QUEUE_PREFIX)
+    try {
+      logger.info(`Using BullMQ with Redis: ${envConfig.REDIS_URL}`)
+      return new BullMqAdapter(envConfig.REDIS_URL, envConfig.QUEUE_PREFIX)
+    } catch (error) {
+      logger.error({ error }, 'Failed to initialize BullMQ queue, falling back to InMemory queue')
+    }
   }
   logger.info('Using InMemory queue (queue fallback)')
   return new InMemoryQueue()

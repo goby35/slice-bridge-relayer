@@ -13,7 +13,6 @@ export const envConfig = {
   LENS_RPC_WS: process.env.LENS_RPC_WS || undefined,
   LENS_CHAIN_ID: Number(process.env.LENS_CHAIN_ID || 37111),
   LENS_START_BLOCK: Number(process.env.LENS_START_BLOCK || 0),
-  LENS_CONFIRMATIONS: Number(process.env.LENS_CONFIRMATIONS || 1),
 
   LENS_MINTER_ADDRESS: process.env.LENS_MINTER_ADDRESS!,
   LENS_WRAPPED_ADDRESS: process.env.LENS_WRAPPED_ADDRESS!,
@@ -22,7 +21,6 @@ export const envConfig = {
   BSC_RPC_WS: process.env.BSC_RPC_WS! || "wss://bsc-ws-node.nariox.org:443",
   BSC_CHAIN_ID: Number(process.env.BSC_CHAIN_ID || 97),
   BSC_START_BLOCK: Number(process.env.BSC_START_BLOCK || 0),
-  BSC_CONFIRMATIONS: Number(process.env.BSC_CONFIRMATIONS || 1),
 
   BSC_TOKEN_ADDRESS: process.env.BSC_TOKEN_ADDRESS!,
   BSC_POOL_ADDRESS: process.env.BSC_POOL_ADDRESS!,

@@ -15,7 +15,3 @@ export async function setCheckpoint(key: string, block: number) {
     .values({ key, lastBlock: block })
     .onConflictDoUpdate({ target: checkpoints.key, set: { lastBlock: block }});
 }
-
-export function confirmationsOk(latest: bigint, seen: bigint, minConf: number) {
-  return latest >= seen + BigInt(minConf);
-}

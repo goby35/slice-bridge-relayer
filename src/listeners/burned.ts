@@ -1,6 +1,6 @@
 import { getAddress, getAbiItem } from "viem";
 import { logger } from "@/core/logger";
-import { getCheckpoint, setCheckpoint, confirmationsOk } from "@/lib/helpers/checkpoint";
+import { getCheckpoint, setCheckpoint } from "@/lib/helpers/checkpoint";
 import { db, bridgeJobs } from "@/db";
 import { BRIDGE_MINTER_LENS_ABI } from "@/abis";
 import { envConfig } from "@/core/env";
@@ -13,7 +13,6 @@ import bridgeQueue from '@/queues'
 
 export async function burnedListener() {
   const key = CheckpointKey.LENS_BURNED;
-  const confs = envConfig.LENS_CONFIRMATIONS;
   const minter = getAddress(envConfig.LENS_MINTER_ADDRESS);
   const start = BigInt(await getCheckpoint(key, envConfig.LENS_START_BLOCK));
   const latest = await lensPublicClient.getBlockNumber();
@@ -29,7 +28,7 @@ export async function burnedListener() {
     event: lockedEventAbi,
     fromBlock: start,
     toBlock: latest > 0n ? latest - 1n : 0n,
-    window: 10_000,
+    window: 20_000,
     onLogs: async (logs) => {
       for (const l of logs) {
         await handleBurnedLog(l);
@@ -38,15 +37,19 @@ export async function burnedListener() {
     },
   });
 
+  console.log("burned blocknumber latest:", latest);
+
   return lensPublicClient.watchContractEvent({
     address: minter,
     abi: BRIDGE_MINTER_LENS_ABI,
     eventName: EventName.BURNED,
     fromBlock: latest, // từ block mới nhất
     onLogs: async (logs) => {
+      console.log("Received burned logs:", logs.length);
       const tip = await lensPublicClient.getBlockNumber();
+      console.log("Current tip block number:", tip);
+      console.log("logs:", logs);
       for (const l of logs) {
-        if (!confirmationsOk(tip, l.blockNumber!, confs)) continue;
         await handleBurnedLog(l);
         await setCheckpoint(key, Number(l.blockNumber!));
       }
