@@ -16,5 +16,5 @@ export const BRIDGE_MINTER_LENS_ABI = parseAbi([
   "function treasury() view returns (address)",
 
   "event Minted(address indexed to, uint256 amount, bytes32 indexed srcTxHash, uint256 srcNonce)",
-  "event Burned(address indexed from, uint256 amount, address indexed toOnBsc, uint256 nonce)",
+  "event Burned(address from, uint256 amount, address toOnBsc, uint256 nonce)"
 ]);

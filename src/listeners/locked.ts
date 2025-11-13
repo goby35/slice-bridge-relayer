@@ -1,5 +1,4 @@
 import { getAddress, getAbiItem } from "viem";
-import { and, eq } from "drizzle-orm";
 import { logger } from "@/core/logger";
 import { db, bridgeJobs } from "@/db";
 import { BRIDGE_GATEWAY_BSC_ABI } from "@/abis";
@@ -30,10 +29,9 @@ export async function lockedListener() {
     event: lockedEventAbi,
     fromBlock: start,
     toBlock: latest > 0n ? latest - 1n : 0n,
-    window: 10_000,
+    window: 5_000,
     onLogs: async (logs) => {
       for (const l of logs) {
-        // không cần confirmations khi backfill lịch sử (đã finalized)
         await handleLockedLog(l);
         await setCheckpoint(key, Number(l.blockNumber!));
       }
@@ -55,10 +53,10 @@ export async function lockedListener() {
     },
     onError: (err) => {
       if (err?.message?.includes("Missing or invalid parameters")) {
-        logger.warn("[locked-listener] watchContractEvent stopped due to missing parameters, restarting listener...");
+        logger.warn({ detail: err.cause }, "[locked-listener] watchContractEvent stopped due to missing parameters, restarting listener...");
         return;
       }
-      logger.error("[locked-listener] error:\n" + err?.message || err);
+      logger.error({ detail: err.message }, "[locked-listener] error");
     },
   });
 }

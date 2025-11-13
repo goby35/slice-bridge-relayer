@@ -11,6 +11,10 @@ type BackfillOpts = {
     onLogs: (logs: Log[]) => Promise<void> | void;
 };
 
+const getNetworkNameByEventName = (eventName: string) => {
+    return eventName.includes('Locked') ? 'BSC' : 'Lens Chain';
+}
+
 export async function backfillInWindows({
     client,
     address,
@@ -23,6 +27,7 @@ export async function backfillInWindows({
     let start = fromBlock;
     const end = toBlock;
 
+    logger.info(`Starting backfill on ${getNetworkNameByEventName(event.name)} from block ${fromBlock} to ${toBlock} in windows of ${window} blocks.`);
     while (start <= end) {
         const chunkEnd = start + BigInt(window);
         const curEnd = chunkEnd > end ? end : chunkEnd;
@@ -34,14 +39,17 @@ export async function backfillInWindows({
                 toBlock: curEnd,
             });
 
+            logger.info(`Backfilled logs from block ${start} to ${curEnd} on ${getNetworkNameByEventName(event.name)}. Retrieved ${logs.length} logs.`);
+            logger.debug({ logs }, 'logs:');
+
             if (logs.length) {
                 await onLogs(logs);
             }
         } catch (err) {
             // bỏ qua lỗi để tiếp tục backfill
-            logger.warn(`Backfill from block ${start} to ${curEnd}, skipping`);
+            logger.warn(`${getNetworkNameByEventName(event.name)} backfill from block ${start} to ${curEnd}, skipping` + ` due to error: ${(err as Error).message}`);
         }
 
-        start = curEnd + 100_000n;
+        start = curEnd + 1n;
     }
 }
